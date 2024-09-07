@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth"
 import { db } from "@/lib/db"
 import addFriendValidator from "@/lib/validators/add-friend"
 import { getServerSession } from "next-auth"
+import { z } from "zod"
 
 export async function POST(request: Request) {
     try{
@@ -10,19 +11,21 @@ export async function POST(request: Request) {
 
         const {email: emailToAdd} = addFriendValidator.parse(body.email)
 
-        const RestResponse = await fetch(
-            `${process.env.UPSTASH_REDIS_REST_URL}/get/user:${emailToAdd}`,
-            {
-                headers: {
-                    Authorization : `Bearer ${process.env.UPSTASH_REDIS_REST_TOKEN}`
-                },
-                cache : 'no-store'
-            }
-        )
+        const idToAdd = await fetchRedis('get', `user:email:${emailToAdd}`) as string
 
-        const data = (await RestResponse.json()) as {result: string | null}
+        // const RestResponse = await fetch(
+        //     `${process.env.UPSTASH_REDIS_REST_URL}/get/user:email:${emailToAdd}`,
+        //     {
+        //         headers: {
+        //             Authorization : `Bearer ${process.env.UPSTASH_REDIS_REST_TOKEN}`
+        //         },
+        //         cache : 'no-store'
+        //     }
+        // )
 
-        const idToAdd = data.result
+        // const data = (await RestResponse.json()) as {result: string | null}
+
+        // const idToAdd = data.result
 
         if(!idToAdd) {
             return new Response ('This user does not exist', {status : 400})
@@ -52,13 +55,27 @@ export async function POST(request: Request) {
             return new Response ('Already a friend', {status : 400})
         }
 
-        if(isAlreadyAdded) {
-            return new Response ('Already added this user', {status : 400})
-        }
+        // if(isAlreadyAdded) {
+        //     return new Response ('Already added this user', {status : 400})
+        // }
 
         //valid request, send friend request
-        db.sadd(`user:${idToAdd}: incoming_friend_requests`, session.user.id)
+        const result = await db.sadd(`user:${idToAdd}:incoming_friend_requests`, session.user.id)
+        if (result === 1) {
+            console.log('Successfully added friend request')
+        }
+        if (result === 0) {
+            console.log('Failed to add friend request')
+        }
+        // db.sadd(`user:${session.user.id}:outgoing_friend_requests`, idToAdd)
+        console.log('Added friend request')
+        return new Response('OK')
     }catch(error){
+        if(error instanceof z.ZodError) {
+            return new Response(error.message, {status : 422})
+        }
+
+        return new Response('Invalid request', {status : 400})
 
     }
 }

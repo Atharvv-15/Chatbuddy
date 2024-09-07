@@ -41,7 +41,7 @@ const AddFriendButton: FC<AddFriendButtonProps> = ({}) => {
         return 
       }
     }
-    setError('email', {message : 'Something went wrong'})
+    // setError('email', {message : 'Something went wrong'})
   }
   const onSubmit = (data : FormData) => {
     addFriend(data.email)
