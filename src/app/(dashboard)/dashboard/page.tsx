@@ -6,7 +6,8 @@ import { getServerSession } from "next-auth"
 const page = async () => {
   const session = await getServerSession(authOptions)
   return (
-    <div>Dashboard
+    <div>
+        <h1 className='text-5xl font-bold mb-8 p-4'>Dashboard</h1>
     </div>
     
   )
