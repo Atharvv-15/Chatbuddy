@@ -54,9 +54,11 @@ const page: FC<pageProps> = async ({params} : pageProps) => {
 
 
 
-  return <div>
+  return <div className='flex-1 justify-between flex flex-col h-full max-h-[calc(100vh-6rem)]'>
     <h1 className='text-5xl font-bold mb-8 p-4'>Chat</h1>
-    <p className='text-2xl font-semibold ml-3'>Chat with <span className='underline'>{params.chatId}</span></p>
+    <div className='flex sm:items-center justify-between py-3 border-b-2 border-gray-200'>
+      <div className='relative flex items-center space-x-4'></div>
+    </div>
   </div>
 }
 
