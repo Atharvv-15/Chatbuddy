@@ -1,9 +1,12 @@
+import ChatInput from '@/components/ChatInput'
+import Messages from '@/components/Messages'
 import { fetchRedis } from '@/helpers/redis'
 import { authOptions } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { messageArrayValidator } from '@/lib/validators/message'
 import { channel } from 'diagnostics_channel'
 import { getServerSession } from 'next-auth'
+import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { parse } from 'path'
 import { FC } from 'react'
@@ -55,10 +58,33 @@ const page: FC<pageProps> = async ({params} : pageProps) => {
 
 
   return <div className='flex-1 justify-between flex flex-col h-full max-h-[calc(100vh-6rem)]'>
-    <h1 className='text-5xl font-bold mb-8 p-4'>Chat</h1>
+    {/* <h1 className='text-5xl font-bold mb-8 p-4'>Recent Chats</h1> */}
     <div className='flex sm:items-center justify-between py-3 border-b-2 border-gray-200'>
-      <div className='relative flex items-center space-x-4'></div>
+      <div className='relative flex items-center space-x-4'>
+        <div className='relative'>
+          <div className='relative w-8 sm:w-12 h-8 sm:h-12'>
+            <Image
+              fill
+              referrerPolicy='no-referrer'
+              src={chatPartner.image}
+              alt={`${chatPartner.name} profile picture`}
+              className='rounded-full'
+            />
+          </div>
+        </div>
+
+        <div className='flex flex-col leading-tight'>
+          <div className='text-xl flex items-center'>
+            <span className='text-gray-700 mr-3 font-semibold'>
+              {chatPartner.name}
+            </span>
+          </div>
+          <span className='text-sm text-gray-500'>{chatPartner.email}</span>
+        </div>
+      </div>
     </div>
+    <Messages initialMessages={initialMessages} sessionId={session.user.id}/>
+    <ChatInput chatPartner={chatPartner} chatId={chatId}/>
   </div>
 }
 
