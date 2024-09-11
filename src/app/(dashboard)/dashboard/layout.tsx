@@ -11,17 +11,11 @@ import FriendRequestSidebarOptions from '@/components/FriendRequestSidebarOption
 import { fetchRedis } from '@/helpers/redis';
 import { getFriendsByUserId } from '@/helpers/get-friends-by-userId';
 import SideBarChatList from '@/components/SideBarChatList';
+import MobileChatLayout from '@/components/MobileChatLayout';
 
 interface LayoutProps {
   children: ReactNode;
   
-}
-
-interface SideBarOptions {
-    id : number
-    name : string
-    href : string
-    Icon : Icon
 }
 
 const sideBarOptions : SideBarOptions[] = [
@@ -44,7 +38,10 @@ const Layout = async ({ children } : LayoutProps) => {
     const unseenRequestsCount = (await fetchRedis('smembers', `user:${session.user.id}:incoming_friend_requests`) as User[]).length
   return (
     <div className='w-full h-screen flex'>
-        <div className='flex h-full w-full max-w-xs grow flex-col gap-y-5 
+        <div className='sm:hidden'>
+            <MobileChatLayout friends={friends} session={session} sidebarOptions={sideBarOptions} unseenRequestCount={unseenRequestsCount} />
+        </div>
+        <div className=' hidden md:flex h-full w-full max-w-xs grow flex-col gap-y-5 
         overflow-y-auto border-r border-gray-200 bg-white px-6'>
             <Link href={'/dashboard'} className='flex h-16 shrink-0 items-center'>
                 <Icons.Logo className='h-8 w-auto text-indigo-600'/>
@@ -57,14 +54,19 @@ const Layout = async ({ children } : LayoutProps) => {
             <nav className='flex flex-1 flex-col'>
                 <ul role='list' className='flex flex-1 flex-col gap-y-7'>
                     <li>
-                        <SideBarChatList sessionId={session.user.id} friends={friends}/>
+                        <SideBarChatList 
+                            sessionId={session.user.id} 
+                            friends={friends} 
+                            sessionImage={session.user.image ?? ''}
+                            sessionName={session.user.name ?? ''}
+                        />
                     </li>
                     <li>
                         <div className='text-xs font-semibold leading-6 text-gray-400'>Overview</div>
 
                         <ul role='list' className='mt-2 -mx-2 space-y-1'>
                             {sideBarOptions.map((option) => {
-                                const Icon = Icons[option.Icon]
+                                const Icon = Icons[option.Icon as keyof typeof Icons]
                                 return (
                                     <li key={option.id}>
                                         <Link className='text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold' href={option.href}>

@@ -70,8 +70,11 @@ const SideBarChatList: FC<SideBarChatListProps> = ({friends, sessionId}) => {
             pusherClient.unbind('new_friend', newFriendHandler) // Unbind newFriendHandler
             pusherClient.unsubscribe(toPusherKey(`user:${sessionId}:chats`))
             pusherClient.unsubscribe(toPusherKey(`user:${sessionId}:friends`))
+
+            pusherClient.unbind('new_friend', newFriendHandler)
+            pusherClient.unbind('new_message', chatHandler)
         }
-    }, [sessionId, pathname]) // Added pathname to dependencies
+    }, [sessionId, pathname, router]) // Added pathname to dependencies
 
     useEffect(() => {
         if(pathname?.includes('chat')) {

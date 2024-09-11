@@ -2,16 +2,11 @@
 import Button from '@/components/ui/Button'
 import { Loader2 } from 'lucide-react'
 import { signIn } from 'next-auth/react'
-import { FC, useState } from 'react'
+import { useState } from 'react'
 import {toast} from 'react-hot-toast'
+import Image from 'next/image'
 
-interface pageProps {
-  
-}
-
-
-
-const page: FC<pageProps> = ({}) => {
+const Page = () => {
     const loginWithGoogle = async () => {
         setIsLoading(true)
         try{
@@ -28,9 +23,17 @@ const page: FC<pageProps> = ({}) => {
   return <>
   <div className='flex min-h-full items-center justify-center py-12 sm:px-6 px-4 lg:px-8'>
     <div className='w-full flex flex-col items-center max-w-md space-y-8'>
-        <div className='flex flex-col items-center gap-8'>
-            LOGO
-            <h2 className='mt-6 text-center text-3xl font-bold tracking-tight text-gray-900'>Sign in to your account</h2>
+        <div className='flex flex-col items-center gap-2'>
+            <Image
+              src="/chatLogo.webp"
+              alt="logo"
+              width={60}
+              height={60}
+              className='w-auto h-auto rounded-full'
+            />
+            <h2 className='mt-6 text-center text-3xl font-bold tracking-tight text-gray-900'>
+              Sign in to your account
+            </h2>
         </div>
 
         <Button isLoading = {isLoading} type='button' 
@@ -74,4 +77,4 @@ const page: FC<pageProps> = ({}) => {
   </>
 }
 
-export default page
+export default Page
