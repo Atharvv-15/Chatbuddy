@@ -26,7 +26,13 @@ const FriendRequests: FC<FriendRequestsProps> = ({
     );
 
     const friendRequestHandler = ({senderId, senderEmail}: IncomingFriendRequest) => {
-        setFriendRequests((prev) => [...prev, {senderId,senderEmail}])
+      setFriendRequests((prev) => {
+        // Check if the request already exists
+        if (prev.some(request => request.senderId === senderId)) {
+          return prev; // If it exists, don't add it again
+        }
+        return [...prev, {senderId, senderEmail}];
+      });
     };
 
     pusherClient.bind("incoming_friend_requests", friendRequestHandler);
@@ -81,6 +87,7 @@ const FriendRequests: FC<FriendRequestsProps> = ({
             >
               <X className="h-3/4 w-3/4 font-semibold text-white" />
             </button>
+            
           </div>
         ))
       )}
