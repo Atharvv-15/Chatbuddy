@@ -23,7 +23,7 @@ export async function POST(req: Request) {
             return new Response('Already friends', {status: 400})
         }
         
-        //verify request exists
+        //verify request exists ..
         const hasFriendRequest = await fetchRedis(`sismember`, `user:${session.user.id}:incoming_friend_requests`, idToAdd)
 
         if(!hasFriendRequest){
