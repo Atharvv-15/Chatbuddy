@@ -33,10 +33,15 @@ export async function POST(req: Request) {
         const [userRaw, friendRaw] = await Promise.all([
             fetchRedis('get', `user:${session.user.id}`),
             fetchRedis('get', `user:${idToAdd}`)
-        ]) as [string, string]
+        ]) as [string | null, string | null] // Allow null values
 
-        const user = JSON.parse(userRaw) as User
-        const friend = JSON.parse(friendRaw) as User
+        // Check if userRaw and friendRaw are defined before parsing
+        const user = userRaw ? JSON.parse(userRaw) as User : null
+        const friend = friendRaw ? JSON.parse(friendRaw) as User : null
+
+        if (!user || !friend) {
+            return new Response('User data not found', {status: 404}) // Handle missing user data
+        }
 
         //notify added friend
         await Promise.all([
