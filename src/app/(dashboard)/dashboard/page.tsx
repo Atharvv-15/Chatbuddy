@@ -29,7 +29,12 @@ const page: FC<pageProps> = async ({}) => {
         '-1',
         '-1'
       ) as string[]
-      const lastMessageData = JSON.parse(lastMessageString) as Message
+      
+      let lastMessageData: Message | null = null;
+      if (lastMessageString) {
+        lastMessageData = JSON.parse(lastMessageString) as Message;
+      }
+
       return {
         ...friend,
         lastMessage: lastMessageData
@@ -62,12 +67,12 @@ const page: FC<pageProps> = async ({}) => {
               </div>
               <div>
                 <h4 className='text-lg font-semibold text-black-600'>{friend.name}</h4>
-              <p className='mt-1 max-w-md text-sm text-black-300'>
-                <span className='font-medium text-black-500'>
-                  {friend.lastMessage?.senderId === session.user.id ? 'You: ' : ' '}
-                </span>
-                {friend.lastMessage.text}
-              </p>
+                <p className='mt-1 max-w-md text-sm text-black-300'>
+                  <span className='font-medium text-black-500'>
+                    {friend.lastMessage?.senderId === session.user.id ? 'You: ' : ' '}
+                  </span>
+                  {friend.lastMessage?.text || 'No messages yet'}
+                </p>
               </div>
             </Link>
           </div>
